@@ -58,4 +58,48 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  try {
+    const result = createCategorySchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        message: "Ogiltig kategori.",
+        errors: result.error.flatten(),
+      });
+    }
+
+    const category = await prisma.category.update({
+      where: {
+        id: req.params.id,
+      },
+      data: {
+        name: result.data.name,
+      },
+    });
+
+    res.json(category);
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return res.status(409).json({
+          message: "En kategori med det namnet finns redan.",
+        });
+      }
+
+      if (error.code === "P2025") {
+        return res.status(404).json({
+          message: "Kategorin kunde inte hittas.",
+        });
+      }
+    }
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Kunde inte uppdatera kategori.",
+    });
+  }
+});
+
 export default router;
