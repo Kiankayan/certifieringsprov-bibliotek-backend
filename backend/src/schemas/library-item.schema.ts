@@ -48,3 +48,5 @@ export const createLibraryItemSchema = z.discriminatedUnion("type", [
   createAudiobookSchema,
   createReferenceBookSchema,
 ]);
+
+export const updateLibraryItemSchema = createLibraryItemSchema;
