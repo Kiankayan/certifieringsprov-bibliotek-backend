@@ -132,4 +132,31 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+  try {
+    await prisma.libraryItem.delete({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    res.status(204).send();
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return res.status(404).json({
+        message: "Library item kunde inte hittas.",
+      });
+    }
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Kunde inte ta bort library item.",
+    });
+  }
+});
+
 export default router;
