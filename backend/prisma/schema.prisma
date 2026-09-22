@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -10,4 +5,32 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+enum LibraryItemType {
+  BOOK
+  DVD
+  AUDIOBOOK
+  REFERENCE_BOOK
+}
+
+model Category {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  libraryItems LibraryItem[]
+}
+
+model LibraryItem {
+  id             String          @id @default(cuid())
+  title          String
+  author         String?
+  nbrPages       Int?
+  runTimeMinutes Int?
+  type           LibraryItemType
+  isBorrowable   Boolean
+  borrower       String?
+  borrowDate     DateTime?
+  categoryId     String
+
+  category       Category @relation(fields: [categoryId], references: [id])
 }
