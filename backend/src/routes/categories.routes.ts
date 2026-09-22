@@ -102,4 +102,44 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+  try {
+    const category = await prisma.category.findUnique({
+      where: {
+        id: req.params.id,
+      },
+      include: {
+        libraryItems: true,
+      },
+    });
+
+    if (!category) {
+      return res.status(404).json({
+        message: "Kategorin kunde inte hittas.",
+      });
+    }
+
+    if (category.libraryItems.length > 0) {
+      return res.status(409).json({
+        message:
+          "Kategorin kan inte tas bort eftersom den används av library items.",
+      });
+    }
+
+    await prisma.category.delete({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Kunde inte ta bort kategori.",
+    });
+  }
+});
+
 export default router;
