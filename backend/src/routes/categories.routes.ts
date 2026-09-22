@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { prisma } from "../lib/prisma.js";
+import { prisma, Prisma } from "../lib/prisma.js";
 import { createCategorySchema } from "../schemas/category.schema.js";
 
 const router = Router();
@@ -41,6 +41,15 @@ router.post("/", async (req, res) => {
 
     res.status(201).json(category);
   } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return res.status(409).json({
+        message: "En kategori med det namnet finns redan.",
+      });
+    }
+
     console.error(error);
 
     res.status(500).json({
