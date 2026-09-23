@@ -135,6 +135,13 @@ function LibraryItemList({
                   <>
                     <p>Utlånad till: {item.borrower}</p>
 
+                    <p>
+                      Utlånad datum:{" "}
+                      {item.borrowDate
+                        ? new Date(item.borrowDate).toLocaleDateString("sv-SE")
+                        : "-"}
+                    </p>
+
                     <button onClick={() => handleReturn(item.id)}>
                       Returnera
                     </button>
