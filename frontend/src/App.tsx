@@ -3,6 +3,7 @@ import { getLibraryItems } from "./services/LibraryItemService";
 import type { LibraryItem } from "./types/library";
 import LibraryItemList from "./components/LibraryItemList";
 import LibraryItemForm from "./components/LibraryItemForm";
+import CategoryManager from "./components/CategoryManager";
 
 function App() {
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
@@ -24,6 +25,8 @@ function App() {
   return (
     <div>
       <h1>Bibliotekssystem</h1>
+
+      <CategoryManager />
 
       <LibraryItemForm onLibraryItemCreated={loadLibraryItems} />
 
