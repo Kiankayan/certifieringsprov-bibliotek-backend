@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   borrowLibraryItem,
   returnLibraryItem,
 } from "../services/LibraryItemService";
-import type { LibraryItem } from "../types/library";
+import { getCategories } from "../services/CategoryService";
+import type { Category, LibraryItem } from "../types/library";
+import EditLibraryItemForm from "./EditLibraryItemForm";
 
 interface LibraryItemListProps {
   libraryItems: LibraryItem[];
@@ -27,6 +29,21 @@ function LibraryItemList({
   onLibraryItemUpdated,
 }: LibraryItemListProps) {
   const [showAbbreviations, setShowAbbreviations] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const response = await getCategories();
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Kunde inte hämta kategorier.", error);
+      }
+    }
+
+    loadCategories();
+  }, []);
 
   async function handleBorrow(itemId: string) {
     const borrower = window.prompt("Ange kundens namn:");
@@ -79,29 +96,48 @@ function LibraryItemList({
 
       {libraryItems.map((item) => (
         <div key={item.id}>
-          <h2>
-            {showAbbreviations ? getTitleAbbreviation(item.title) : item.title}
-          </h2>
-
-          <p>Typ: {item.type}</p>
-          <p>Kategori: {item.category.name}</p>
-
-          {item.isBorrowable ? (
-            item.borrower ? (
-              <>
-                <p>Utlånad till: {item.borrower}</p>
-
-                <button onClick={() => handleReturn(item.id)}>Returnera</button>
-              </>
-            ) : (
-              <>
-                <p>Ej utlånad</p>
-
-                <button onClick={() => handleBorrow(item.id)}>Låna</button>
-              </>
-            )
+          {editingItemId === item.id ? (
+            <EditLibraryItemForm
+              item={item}
+              categories={categories}
+              onLibraryItemUpdated={onLibraryItemUpdated}
+              onCancel={() => setEditingItemId(null)}
+            />
           ) : (
-            <p>Referensexemplar – kan inte lånas</p>
+            <>
+              <h2>
+                {showAbbreviations
+                  ? getTitleAbbreviation(item.title)
+                  : item.title}
+              </h2>
+
+              <p>Typ: {item.type}</p>
+              <p>Kategori: {item.category.name}</p>
+
+              {item.isBorrowable ? (
+                item.borrower ? (
+                  <>
+                    <p>Utlånad till: {item.borrower}</p>
+
+                    <button onClick={() => handleReturn(item.id)}>
+                      Returnera
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p>Ej utlånad</p>
+
+                    <button onClick={() => handleBorrow(item.id)}>Låna</button>
+                  </>
+                )
+              ) : (
+                <p>Referensexemplar – kan inte lånas</p>
+              )}
+
+              <button type="button" onClick={() => setEditingItemId(item.id)}>
+                Ändra
+              </button>
+            </>
           )}
         </div>
       ))}

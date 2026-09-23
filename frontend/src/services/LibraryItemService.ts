@@ -32,3 +32,18 @@ export async function createLibraryItem(data: {
 }) {
   return axios.post<LibraryItem>(API_BASEURL, data);
 }
+
+export async function updateLibraryItem(
+  id: string,
+  data: {
+    title: string;
+    categoryId: string;
+    isBorrowable: boolean;
+    type: "BOOK" | "DVD" | "AUDIOBOOK" | "REFERENCE_BOOK";
+    author?: string;
+    nbrPages?: number;
+    runTimeMinutes?: number;
+  },
+) {
+  return axios.put<LibraryItem>(`${API_BASEURL}/${id}`, data);
+}
