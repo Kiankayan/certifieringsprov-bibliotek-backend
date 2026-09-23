@@ -20,3 +20,15 @@ export async function getLibraryItems(sort: "category" | "type" = "category") {
     },
   });
 }
+
+export async function createLibraryItem(data: {
+  title: string;
+  categoryId: string;
+  isBorrowable: boolean;
+  type: "BOOK" | "DVD" | "AUDIOBOOK" | "REFERENCE_BOOK";
+  author?: string;
+  nbrPages?: number;
+  runTimeMinutes?: number;
+}) {
+  return axios.post<LibraryItem>(API_BASEURL, data);
+}
