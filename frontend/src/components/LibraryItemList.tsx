@@ -3,6 +3,8 @@ import type { LibraryItem } from "../types/library";
 
 interface LibraryItemListProps {
   libraryItems: LibraryItem[];
+  sort: "category" | "type";
+  setSort: (sort: "category" | "type") => void;
 }
 
 function getTitleAbbreviation(title: string) {
@@ -13,11 +15,30 @@ function getTitleAbbreviation(title: string) {
     .join("");
 }
 
-function LibraryItemList({ libraryItems }: LibraryItemListProps) {
+function LibraryItemList({
+  libraryItems,
+  sort,
+  setSort,
+}: LibraryItemListProps) {
   const [showAbbreviations, setShowAbbreviations] = useState(false);
 
   return (
     <div>
+      <div>
+        <label htmlFor="sort">Sortera efter: </label>
+
+        <select
+          id="sort"
+          value={sort}
+          onChange={(event) =>
+            setSort(event.target.value as "category" | "type")
+          }
+        >
+          <option value="category">Kategori</option>
+          <option value="type">Typ</option>
+        </select>
+      </div>
+
       <button onClick={() => setShowAbbreviations(!showAbbreviations)}>
         {showAbbreviations
           ? "Visa fullständiga titlar"
