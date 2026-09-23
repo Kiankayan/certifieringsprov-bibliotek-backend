@@ -194,6 +194,52 @@ router.post("/:id/borrow", async (req, res) => {
   }
 });
 
+router.post("/:id/return", async (req, res) => {
+  try {
+    const libraryItem = await prisma.libraryItem.findUnique({
+      where: {
+        id: req.params.id,
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    if (!libraryItem) {
+      return res.status(404).json({
+        message: "Library item kunde inte hittas.",
+      });
+    }
+
+    if (!libraryItem.borrower || !libraryItem.borrowDate) {
+      return res.status(409).json({
+        message: "Library item är inte utlånat.",
+      });
+    }
+
+    const returnedLibraryItem = await prisma.libraryItem.update({
+      where: {
+        id: req.params.id,
+      },
+      data: {
+        borrower: null,
+        borrowDate: null,
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    res.json(returnedLibraryItem);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Kunde inte återlämna library item.",
+    });
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   try {
     await prisma.libraryItem.delete({
