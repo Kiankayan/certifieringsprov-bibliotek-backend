@@ -47,3 +47,7 @@ export async function updateLibraryItem(
 ) {
   return axios.put<LibraryItem>(`${API_BASEURL}/${id}`, data);
 }
+
+export async function deleteLibraryItem(id: string) {
+  return axios.delete(`${API_BASEURL}/${id}`);
+}

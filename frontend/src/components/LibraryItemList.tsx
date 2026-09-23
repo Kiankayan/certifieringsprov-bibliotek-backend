@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   borrowLibraryItem,
   returnLibraryItem,
+  deleteLibraryItem,
 } from "../services/LibraryItemService";
 import { getCategories } from "../services/CategoryService";
 import type { Category, LibraryItem } from "../types/library";
@@ -48,9 +49,7 @@ function LibraryItemList({
   async function handleBorrow(itemId: string) {
     const borrower = window.prompt("Ange kundens namn:");
 
-    if (!borrower || borrower.trim() === "") {
-      return;
-    }
+    if (!borrower || borrower.trim() === "") return;
 
     try {
       await borrowLibraryItem(itemId, borrower.trim());
@@ -68,6 +67,22 @@ function LibraryItemList({
     } catch (error) {
       console.error("Kunde inte returnera library item.", error);
       window.alert("Det gick inte att returnera objektet.");
+    }
+  }
+
+  async function handleDelete(itemId: string) {
+    const confirmed = window.confirm(
+      "Är du säker på att du vill ta bort biblioteksposten?",
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteLibraryItem(itemId);
+      await onLibraryItemUpdated();
+    } catch (error) {
+      console.error("Kunde inte ta bort library item.", error);
+      window.alert("Det gick inte att ta bort biblioteksposten.");
     }
   }
 
@@ -112,6 +127,7 @@ function LibraryItemList({
               </h2>
 
               <p>Typ: {item.type}</p>
+
               <p>Kategori: {item.category.name}</p>
 
               {item.isBorrowable ? (
@@ -136,6 +152,10 @@ function LibraryItemList({
 
               <button type="button" onClick={() => setEditingItemId(item.id)}>
                 Ändra
+              </button>
+
+              <button type="button" onClick={() => handleDelete(item.id)}>
+                Ta bort
               </button>
             </>
           )}
