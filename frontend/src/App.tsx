@@ -25,7 +25,7 @@ function App() {
     <div>
       <h1>Bibliotekssystem</h1>
 
-      <LibraryItemForm />
+      <LibraryItemForm onLibraryItemCreated={loadLibraryItems} />
 
       <LibraryItemList
         libraryItems={libraryItems}
