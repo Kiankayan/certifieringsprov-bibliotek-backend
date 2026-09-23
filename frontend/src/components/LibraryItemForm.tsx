@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createLibraryItem } from "../services/LibraryItemService";
 import { getCategories } from "../services/CategoryService";
 import type { Category } from "../types/library";
+import { libraryItemSchema } from "../schemas/libraryItemSchema";
 
 type LibraryItemType = "BOOK" | "DVD" | "AUDIOBOOK" | "REFERENCE_BOOK";
 
@@ -50,26 +51,33 @@ function LibraryItemForm({ onLibraryItemCreated }: LibraryItemFormProps) {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    try {
-      const data = {
-        title: title.trim(),
-        categoryId,
-        isBorrowable,
-        type,
-        ...(type === "BOOK" || type === "REFERENCE_BOOK"
-          ? {
-              author: author.trim(),
-              nbrPages: Number(nbrPages),
-            }
-          : {}),
-        ...(type === "DVD" || type === "AUDIOBOOK"
-          ? {
-              runTimeMinutes: Number(runTimeMinutes),
-            }
-          : {}),
-      };
+    const data = {
+      title: title.trim(),
+      categoryId,
+      isBorrowable,
+      type,
+      ...(type === "BOOK" || type === "REFERENCE_BOOK"
+        ? {
+            author: author.trim(),
+            nbrPages: Number(nbrPages),
+          }
+        : {}),
+      ...(type === "DVD" || type === "AUDIOBOOK"
+        ? {
+            runTimeMinutes: Number(runTimeMinutes),
+          }
+        : {}),
+    };
 
-      await createLibraryItem(data);
+    const result = libraryItemSchema.safeParse(data);
+
+    if (!result.success) {
+      window.alert(result.error.issues[0].message);
+      return;
+    }
+
+    try {
+      await createLibraryItem(result.data);
 
       setTitle("");
       setAuthor("");
