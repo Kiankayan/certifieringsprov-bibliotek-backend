@@ -42,12 +42,20 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", async (_req, res) => {
+router.get("/", async (req, res) => {
   try {
+    const sort = req.query.sort;
+
+    const orderBy =
+      sort === "type"
+        ? { type: "asc" as const }
+        : { category: { name: "asc" as const } };
+
     const libraryItems = await prisma.libraryItem.findMany({
       include: {
         category: true,
       },
+      orderBy,
     });
 
     res.json(libraryItems);
