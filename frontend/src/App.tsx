@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getLibraryItems } from "./services/LibraryItemService";
 import type { LibraryItem } from "./types/library";
+import LibraryItemList from "./components/LibraryItemList";
 
 function App() {
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
@@ -22,13 +23,7 @@ function App() {
     <div>
       <h1>Bibliotekssystem</h1>
 
-      {libraryItems.map((item) => (
-        <div key={item.id}>
-          <h2>{item.title}</h2>
-          <p>Typ: {item.type}</p>
-          <p>Kategori: {item.category.name}</p>
-        </div>
-      ))}
+      <LibraryItemList libraryItems={libraryItems} />
     </div>
   );
 }
