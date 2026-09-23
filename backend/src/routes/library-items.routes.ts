@@ -4,6 +4,7 @@ import {
   createLibraryItemSchema,
   updateLibraryItemSchema,
 } from "../schemas/library-item.schema.js";
+import { borrowLibraryItemSchema } from "../schemas/borrow.schema.js";
 
 const router = Router();
 
@@ -128,6 +129,67 @@ router.put("/:id", async (req, res) => {
 
     res.status(500).json({
       message: "Kunde inte uppdatera library item.",
+    });
+  }
+});
+
+router.post("/:id/borrow", async (req, res) => {
+  try {
+    const result = borrowLibraryItemSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        message: "Ogiltig låntagare.",
+        errors: result.error.flatten(),
+      });
+    }
+
+    const libraryItem = await prisma.libraryItem.findUnique({
+      where: {
+        id: req.params.id,
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    if (!libraryItem) {
+      return res.status(404).json({
+        message: "Library item kunde inte hittas.",
+      });
+    }
+
+    if (!libraryItem.isBorrowable) {
+      return res.status(400).json({
+        message: "Detta library item kan inte lånas.",
+      });
+    }
+
+    if (libraryItem.borrower || libraryItem.borrowDate) {
+      return res.status(409).json({
+        message: "Library item är redan utlånat.",
+      });
+    }
+
+    const updatedLibraryItem = await prisma.libraryItem.update({
+      where: {
+        id: req.params.id,
+      },
+      data: {
+        borrower: result.data.borrower,
+        borrowDate: new Date(),
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    res.json(updatedLibraryItem);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Kunde inte låna library item.",
     });
   }
 });
