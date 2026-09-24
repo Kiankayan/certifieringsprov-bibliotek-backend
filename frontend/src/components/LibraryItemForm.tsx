@@ -1,18 +1,20 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createLibraryItem } from "../services/LibraryItemService";
-import { getCategories } from "../services/CategoryService";
 import type { Category } from "../types/library";
 import { libraryItemSchema } from "../schemas/libraryItemSchema";
 
 type LibraryItemType = "BOOK" | "DVD" | "AUDIOBOOK" | "REFERENCE_BOOK";
 
 interface LibraryItemFormProps {
+  categories: Category[];
   onLibraryItemCreated: () => Promise<void>;
 }
 
-function LibraryItemForm({ onLibraryItemCreated }: LibraryItemFormProps) {
+function LibraryItemForm({
+  categories,
+  onLibraryItemCreated,
+}: LibraryItemFormProps) {
   const [type, setType] = useState<LibraryItemType>("BOOK");
-  const [categories, setCategories] = useState<Category[]>([]);
   const [categoryId, setCategoryId] = useState("");
 
   const [title, setTitle] = useState("");
@@ -20,19 +22,6 @@ function LibraryItemForm({ onLibraryItemCreated }: LibraryItemFormProps) {
   const [nbrPages, setNbrPages] = useState("");
   const [runTimeMinutes, setRunTimeMinutes] = useState("");
   const [isBorrowable, setIsBorrowable] = useState(true);
-
-  useEffect(() => {
-    async function loadCategories() {
-      try {
-        const response = await getCategories();
-        setCategories(response.data);
-      } catch (error) {
-        console.error("Kunde inte hämta kategorier.", error);
-      }
-    }
-
-    loadCategories();
-  }, []);
 
   function handleTypeChange(newType: LibraryItemType) {
     setType(newType);

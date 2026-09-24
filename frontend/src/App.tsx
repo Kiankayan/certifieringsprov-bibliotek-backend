@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { getLibraryItems } from "./services/LibraryItemService";
-import type { LibraryItem } from "./types/library";
+import { getCategories } from "./services/CategoryService";
+import type { Category, LibraryItem } from "./types/library";
 import LibraryItemList from "./components/LibraryItemList";
 import LibraryItemForm from "./components/LibraryItemForm";
 import CategoryManager from "./components/CategoryManager";
 
 function App() {
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [sort, setSort] = useState<"category" | "type">("category");
 
   const loadLibraryItems = useCallback(async () => {
@@ -18,6 +20,24 @@ function App() {
     }
   }, [sort]);
 
+  const loadCategories = useCallback(async () => {
+    try {
+      const response = await getCategories();
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Kunde inte hämta kategorier.", error);
+    }
+  }, []);
+
+  const handleCategoriesChanged = async () => {
+    await loadCategories();
+    await loadLibraryItems();
+  };
+
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
+
   useEffect(() => {
     loadLibraryItems();
   }, [loadLibraryItems]);
@@ -26,9 +46,15 @@ function App() {
     <div>
       <h1>Bibliotekssystem</h1>
 
-      <CategoryManager />
+      <CategoryManager
+        categories={categories}
+        onCategoriesChanged={handleCategoriesChanged}
+      />
 
-      <LibraryItemForm onLibraryItemCreated={loadLibraryItems} />
+      <LibraryItemForm
+        categories={categories}
+        onLibraryItemCreated={loadLibraryItems}
+      />
 
       <LibraryItemList
         libraryItems={libraryItems}

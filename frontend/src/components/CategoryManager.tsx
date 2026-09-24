@@ -1,32 +1,25 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   createCategory,
   deleteCategory,
-  getCategories,
   updateCategory,
 } from "../services/CategoryService";
 import type { Category } from "../types/library";
 
-function CategoryManager() {
-  const [categories, setCategories] = useState<Category[]>([]);
+interface CategoryManagerProps {
+  categories: Category[];
+  onCategoriesChanged: () => Promise<void>;
+}
+
+function CategoryManager({
+  categories,
+  onCategoriesChanged,
+}: CategoryManagerProps) {
   const [newCategoryName, setNewCategoryName] = useState("");
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
     null,
   );
   const [editingCategoryName, setEditingCategoryName] = useState("");
-
-  async function loadCategories() {
-    try {
-      const response = await getCategories();
-      setCategories(response.data);
-    } catch (error) {
-      console.error("Kunde inte hämta kategorier.", error);
-    }
-  }
-
-  useEffect(() => {
-    loadCategories();
-  }, []);
 
   async function handleCreateCategory() {
     const name = newCategoryName.trim();
@@ -39,7 +32,7 @@ function CategoryManager() {
     try {
       await createCategory(name);
       setNewCategoryName("");
-      await loadCategories();
+      await onCategoriesChanged();
     } catch (error) {
       console.error("Kunde inte skapa kategori.", error);
       window.alert("Kunde inte skapa kategorin.");
@@ -57,9 +50,7 @@ function CategoryManager() {
   }
 
   async function handleUpdateCategory() {
-    if (!editingCategoryId) {
-      return;
-    }
+    if (!editingCategoryId) return;
 
     const name = editingCategoryName.trim();
 
@@ -70,9 +61,8 @@ function CategoryManager() {
 
     try {
       await updateCategory(editingCategoryId, name);
-
       cancelEditing();
-      await loadCategories();
+      await onCategoriesChanged();
     } catch (error) {
       console.error("Kunde inte uppdatera kategori.", error);
       window.alert("Kunde inte uppdatera kategorin.");
@@ -84,13 +74,11 @@ function CategoryManager() {
       "Är du säker på att du vill ta bort kategorin?",
     );
 
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     try {
       await deleteCategory(id);
-      await loadCategories();
+      await onCategoriesChanged();
     } catch (error) {
       console.error("Kunde inte ta bort kategori.", error);
       window.alert(
