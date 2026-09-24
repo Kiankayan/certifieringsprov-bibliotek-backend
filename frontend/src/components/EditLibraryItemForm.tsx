@@ -83,114 +83,130 @@ function EditLibraryItemForm({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h3>Redigera bibliotekspost</h3>
-
-      <div>
-        <label htmlFor={`edit-type-${item.id}`}>Typ: </label>
-
-        <select
-          id={`edit-type-${item.id}`}
-          value={type}
-          onChange={(event) =>
-            handleTypeChange(event.target.value as LibraryItemType)
-          }
-        >
-          <option value="BOOK">Bok</option>
-          <option value="DVD">DVD</option>
-          <option value="AUDIOBOOK">Ljudbok</option>
-          <option value="REFERENCE_BOOK">Referensbok</option>
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor={`edit-title-${item.id}`}>Titel: </label>
-
-        <input
-          id={`edit-title-${item.id}`}
-          type="text"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-        />
-      </div>
-
-      {(type === "BOOK" || type === "REFERENCE_BOOK") && (
-        <>
-          <div>
-            <label htmlFor={`edit-author-${item.id}`}>Författare: </label>
-
-            <input
-              id={`edit-author-${item.id}`}
-              type="text"
-              value={author}
-              onChange={(event) => setAuthor(event.target.value)}
-            />
-          </div>
-
-          <div>
-            <label htmlFor={`edit-pages-${item.id}`}>Antal sidor: </label>
-
-            <input
-              id={`edit-pages-${item.id}`}
-              type="number"
-              value={nbrPages}
-              onChange={(event) => setNbrPages(event.target.value)}
-            />
-          </div>
-        </>
-      )}
-
-      {(type === "DVD" || type === "AUDIOBOOK") && (
+    <form className="edit-library-item-form" onSubmit={handleSubmit}>
+      <div className="edit-form-header">
         <div>
-          <label htmlFor={`edit-runtime-${item.id}`}>Speltid i minuter: </label>
+          <p className="eyebrow">REDIGERA</p>
+          <h3>Redigera bibliotekspost</h3>
+        </div>
+      </div>
+
+      <div className="form-grid">
+        <div className="form-group">
+          <label htmlFor={`edit-type-${item.id}`}>Typ</label>
+
+          <select
+            id={`edit-type-${item.id}`}
+            value={type}
+            onChange={(event) =>
+              handleTypeChange(event.target.value as LibraryItemType)
+            }
+          >
+            <option value="BOOK">Bok</option>
+            <option value="DVD">DVD</option>
+            <option value="AUDIOBOOK">Ljudbok</option>
+            <option value="REFERENCE_BOOK">Referensbok</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor={`edit-title-${item.id}`}>Titel</label>
 
           <input
-            id={`edit-runtime-${item.id}`}
-            type="number"
-            value={runTimeMinutes}
-            onChange={(event) => setRunTimeMinutes(event.target.value)}
+            id={`edit-title-${item.id}`}
+            type="text"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
           />
         </div>
-      )}
 
-      <div>
-        <label htmlFor={`edit-category-${item.id}`}>Kategori: </label>
+        {(type === "BOOK" || type === "REFERENCE_BOOK") && (
+          <>
+            <div className="form-group">
+              <label htmlFor={`edit-author-${item.id}`}>Författare</label>
 
-        <select
-          id={`edit-category-${item.id}`}
-          value={categoryId}
-          onChange={(event) => setCategoryId(event.target.value)}
-        >
-          <option value="">Välj kategori</option>
+              <input
+                id={`edit-author-${item.id}`}
+                type="text"
+                value={author}
+                onChange={(event) => setAuthor(event.target.value)}
+              />
+            </div>
 
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+            <div className="form-group">
+              <label htmlFor={`edit-pages-${item.id}`}>Antal sidor</label>
+
+              <input
+                id={`edit-pages-${item.id}`}
+                type="number"
+                value={nbrPages}
+                onChange={(event) => setNbrPages(event.target.value)}
+              />
+            </div>
+          </>
+        )}
+
+        {(type === "DVD" || type === "AUDIOBOOK") && (
+          <div className="form-group">
+            <label htmlFor={`edit-runtime-${item.id}`}>Speltid i minuter</label>
+
+            <input
+              id={`edit-runtime-${item.id}`}
+              type="number"
+              value={runTimeMinutes}
+              onChange={(event) => setRunTimeMinutes(event.target.value)}
+            />
+          </div>
+        )}
+
+        <div className="form-group">
+          <label htmlFor={`edit-category-${item.id}`}>Kategori</label>
+
+          <select
+            id={`edit-category-${item.id}`}
+            value={categoryId}
+            onChange={(event) => setCategoryId(event.target.value)}
+          >
+            <option value="">Välj kategori</option>
+
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {type !== "REFERENCE_BOOK" && (
-        <div>
-          <label htmlFor={`edit-borrowable-${item.id}`}>Kan lånas: </label>
-
+        <label
+          className="checkbox-group"
+          htmlFor={`edit-borrowable-${item.id}`}
+        >
           <input
             id={`edit-borrowable-${item.id}`}
             type="checkbox"
             checked={isBorrowable}
             onChange={(event) => setIsBorrowable(event.target.checked)}
           />
-        </div>
+
+          <span>Kan lånas</span>
+        </label>
       )}
 
-      {type === "REFERENCE_BOOK" && <p>Referensböcker kan inte lånas.</p>}
+      {type === "REFERENCE_BOOK" && (
+        <p className="reference-notice">Referensböcker kan inte lånas.</p>
+      )}
 
-      <button type="submit">Spara ändringar</button>
+      <div className="edit-form-actions">
+        <button className="primary-button" type="submit">
+          Spara ändringar
+        </button>
 
-      <button type="button" onClick={onCancel}>
-        Avbryt
-      </button>
+        <button className="secondary-button" type="button" onClick={onCancel}>
+          Avbryt
+        </button>
+      </div>
     </form>
   );
 }
