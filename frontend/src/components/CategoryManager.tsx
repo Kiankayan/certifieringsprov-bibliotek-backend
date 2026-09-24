@@ -35,7 +35,7 @@ function CategoryManager({
       await onCategoriesChanged();
     } catch (error) {
       console.error("Kunde inte skapa kategori.", error);
-      window.alert("Kunde inte skapa kategorin.");
+      window.alert("Det finns redan en kategori med samma namn.");
     }
   }
 
@@ -65,7 +65,7 @@ function CategoryManager({
       await onCategoriesChanged();
     } catch (error) {
       console.error("Kunde inte uppdatera kategori.", error);
-      window.alert("Kunde inte uppdatera kategorin.");
+      window.alert("Det finns redan en kategori med samma namn.");
     }
   }
 
