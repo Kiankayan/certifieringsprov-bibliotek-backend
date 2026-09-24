@@ -5,6 +5,7 @@ import type { Category, LibraryItem } from "./types/library";
 import LibraryItemList from "./components/LibraryItemList";
 import LibraryItemForm from "./components/LibraryItemForm";
 import CategoryManager from "./components/CategoryManager";
+import "./App.css";
 
 function App() {
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);

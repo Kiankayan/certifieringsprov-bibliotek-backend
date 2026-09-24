@@ -88,10 +88,8 @@ function CategoryManager({
   }
 
   return (
-    <section>
-      <h2>Kategorier</h2>
-
-      <div>
+    <section className="category-manager">
+      <div className="category-create">
         <input
           type="text"
           value={newCategoryName}
@@ -104,42 +102,50 @@ function CategoryManager({
         </button>
       </div>
 
-      {categories.map((category) => (
-        <div key={category.id}>
-          {editingCategoryId === category.id ? (
-            <>
-              <input
-                type="text"
-                value={editingCategoryName}
-                onChange={(event) => setEditingCategoryName(event.target.value)}
-              />
+      <div className="category-list">
+        {categories.map((category) => (
+          <div className="category-row" key={category.id}>
+            {editingCategoryId === category.id ? (
+              <div className="category-edit">
+                <input
+                  type="text"
+                  value={editingCategoryName}
+                  onChange={(event) =>
+                    setEditingCategoryName(event.target.value)
+                  }
+                />
 
-              <button type="button" onClick={handleUpdateCategory}>
-                Spara
-              </button>
+                <div className="category-actions">
+                  <button type="button" onClick={handleUpdateCategory}>
+                    Spara
+                  </button>
 
-              <button type="button" onClick={cancelEditing}>
-                Avbryt
-              </button>
-            </>
-          ) : (
-            <>
-              <span>{category.name}</span>
+                  <button type="button" onClick={cancelEditing}>
+                    Avbryt
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <span className="category-name">{category.name}</span>
 
-              <button type="button" onClick={() => startEditing(category)}>
-                Ändra
-              </button>
+                <div className="category-actions">
+                  <button type="button" onClick={() => startEditing(category)}>
+                    Ändra
+                  </button>
 
-              <button
-                type="button"
-                onClick={() => handleDeleteCategory(category.id)}
-              >
-                Ta bort
-              </button>
-            </>
-          )}
-        </div>
-      ))}
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteCategory(category.id)}
+                  >
+                    Ta bort
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

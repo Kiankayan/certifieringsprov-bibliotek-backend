@@ -100,87 +100,150 @@ function LibraryItemList({
   }
 
   return (
-    <div>
-      <div>
-        <label htmlFor="sort">Sortera efter: </label>
+    <div className="library-list">
+      <div className="library-toolbar">
+        <div className="sort-control">
+          <label htmlFor="sort">Sortera efter:</label>
 
-        <select
-          id="sort"
-          value={sort}
-          onChange={(event) =>
-            setSort(event.target.value as "category" | "type")
-          }
+          <select
+            id="sort"
+            value={sort}
+            onChange={(event) =>
+              setSort(event.target.value as "category" | "type")
+            }
+          >
+            <option value="category">Kategori</option>
+            <option value="type">Typ</option>
+          </select>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setShowAbbreviations(!showAbbreviations)}
         >
-          <option value="category">Kategori</option>
-          <option value="type">Typ</option>
-        </select>
+          {showAbbreviations
+            ? "Visa fullständiga titlar"
+            : "Visa förkortade titlar"}
+        </button>
       </div>
 
-      <button onClick={() => setShowAbbreviations(!showAbbreviations)}>
-        {showAbbreviations
-          ? "Visa fullständiga titlar"
-          : "Visa förkortade titlar"}
-      </button>
+      <div className="library-items">
+        {libraryItems.map((item) => (
+          <div className="library-item" key={item.id}>
+            {editingItemId === item.id ? (
+              <EditLibraryItemForm
+                item={item}
+                categories={categories}
+                onLibraryItemUpdated={onLibraryItemUpdated}
+                onCancel={() => setEditingItemId(null)}
+              />
+            ) : (
+              <>
+                <h2>
+                  {showAbbreviations
+                    ? getTitleAbbreviation(item.title)
+                    : item.title}
+                </h2>
 
-      {libraryItems.map((item) => (
-        <div key={item.id}>
-          {editingItemId === item.id ? (
-            <EditLibraryItemForm
-              item={item}
-              categories={categories}
-              onLibraryItemUpdated={onLibraryItemUpdated}
-              onCancel={() => setEditingItemId(null)}
-            />
-          ) : (
-            <>
-              <h2>
-                {showAbbreviations
-                  ? getTitleAbbreviation(item.title)
-                  : item.title}
-              </h2>
+                <p>Typ: {getLibraryItemTypeLabel(item.type)}</p>
 
-              <p>Typ: {getLibraryItemTypeLabel(item.type)}</p>
+                <p>Kategori: {item.category.name}</p>
 
-              <p>Kategori: {item.category.name}</p>
+                {item.isBorrowable ? (
+                  item.borrower ? (
+                    <>
+                      <p>Utlånad till: {item.borrower}</p>
 
-              {item.isBorrowable ? (
-                item.borrower ? (
-                  <>
-                    <p>Utlånad till: {item.borrower}</p>
+                      <p>
+                        Utlånad datum:{" "}
+                        {item.borrowDate
+                          ? new Date(item.borrowDate).toLocaleDateString(
+                              "sv-SE",
+                            )
+                          : "-"}
+                      </p>
 
-                    <p>
-                      Utlånad datum:{" "}
-                      {item.borrowDate
-                        ? new Date(item.borrowDate).toLocaleDateString("sv-SE")
-                        : "-"}
-                    </p>
+                      <div className="library-item-actions">
+                        <button
+                          type="button"
+                          className="library-action-button"
+                          onClick={() => handleReturn(item.id)}
+                        >
+                          Returnera
+                        </button>
 
-                    <button onClick={() => handleReturn(item.id)}>
-                      Returnera
-                    </button>
-                  </>
+                        <button
+                          type="button"
+                          className="library-action-button"
+                          onClick={() => setEditingItemId(item.id)}
+                        >
+                          Ändra
+                        </button>
+
+                        <button
+                          type="button"
+                          className="library-action-button"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          Ta bort
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p>Ej utlånad</p>
+
+                      <div className="library-item-actions">
+                        <button
+                          type="button"
+                          className="library-action-button"
+                          onClick={() => handleBorrow(item.id)}
+                        >
+                          Låna
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setEditingItemId(item.id)}
+                        >
+                          Ändra
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          Ta bort
+                        </button>
+                      </div>
+                    </>
+                  )
                 ) : (
                   <>
-                    <p>Ej utlånad</p>
+                    <p>Referensexemplar – kan inte lånas</p>
 
-                    <button onClick={() => handleBorrow(item.id)}>Låna</button>
+                    <div className="library-item-actions">
+                      <button
+                        type="button"
+                        onClick={() => setEditingItemId(item.id)}
+                      >
+                        Ändra
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(item.id)}
+                      >
+                        Ta bort
+                      </button>
+                    </div>
                   </>
-                )
-              ) : (
-                <p>Referensexemplar – kan inte lånas</p>
-              )}
-
-              <button type="button" onClick={() => setEditingItemId(item.id)}>
-                Ändra
-              </button>
-
-              <button type="button" onClick={() => handleDelete(item.id)}>
-                Ta bort
-              </button>
-            </>
-          )}
-        </div>
-      ))}
+                )}
+              </>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

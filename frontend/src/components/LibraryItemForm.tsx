@@ -84,110 +84,113 @@ function LibraryItemForm({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Skapa bibliotekspost</h2>
+    <form className="library-item-form" onSubmit={handleSubmit}>
+      <div className="form-grid">
+        <div className="form-group">
+          <label htmlFor="type">Typ</label>
 
-      <div>
-        <label htmlFor="type">Typ: </label>
+          <select
+            id="type"
+            value={type}
+            onChange={(event) =>
+              handleTypeChange(event.target.value as LibraryItemType)
+            }
+          >
+            <option value="BOOK">Bok</option>
+            <option value="DVD">DVD</option>
+            <option value="AUDIOBOOK">Ljudbok</option>
+            <option value="REFERENCE_BOOK">Referensbok</option>
+          </select>
+        </div>
 
-        <select
-          id="type"
-          value={type}
-          onChange={(event) =>
-            handleTypeChange(event.target.value as LibraryItemType)
-          }
-        >
-          <option value="BOOK">Bok</option>
-          <option value="DVD">DVD</option>
-          <option value="AUDIOBOOK">Ljudbok</option>
-          <option value="REFERENCE_BOOK">Referensbok</option>
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor="title">Titel: </label>
-
-        <input
-          id="title"
-          type="text"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-        />
-      </div>
-
-      {(type === "BOOK" || type === "REFERENCE_BOOK") && (
-        <>
-          <div>
-            <label htmlFor="author">Författare: </label>
-
-            <input
-              id="author"
-              type="text"
-              value={author}
-              onChange={(event) => setAuthor(event.target.value)}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="nbrPages">Antal sidor: </label>
-
-            <input
-              id="nbrPages"
-              type="number"
-              value={nbrPages}
-              onChange={(event) => setNbrPages(event.target.value)}
-            />
-          </div>
-        </>
-      )}
-
-      {(type === "DVD" || type === "AUDIOBOOK") && (
-        <div>
-          <label htmlFor="runTimeMinutes">Speltid i minuter: </label>
+        <div className="form-group">
+          <label htmlFor="title">Titel</label>
 
           <input
-            id="runTimeMinutes"
-            type="number"
-            value={runTimeMinutes}
-            onChange={(event) => setRunTimeMinutes(event.target.value)}
+            id="title"
+            type="text"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
           />
         </div>
-      )}
 
-      <div>
-        <label htmlFor="category">Kategori: </label>
+        {(type === "BOOK" || type === "REFERENCE_BOOK") && (
+          <>
+            <div className="form-group">
+              <label htmlFor="author">Författare</label>
 
-        <select
-          id="category"
-          value={categoryId}
-          onChange={(event) => setCategoryId(event.target.value)}
-        >
-          <option value="">Välj kategori</option>
+              <input
+                id="author"
+                type="text"
+                value={author}
+                onChange={(event) => setAuthor(event.target.value)}
+              />
+            </div>
 
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+            <div className="form-group">
+              <label htmlFor="nbrPages">Antal sidor</label>
+
+              <input
+                id="nbrPages"
+                type="number"
+                value={nbrPages}
+                onChange={(event) => setNbrPages(event.target.value)}
+              />
+            </div>
+          </>
+        )}
+
+        {(type === "DVD" || type === "AUDIOBOOK") && (
+          <div className="form-group">
+            <label htmlFor="runTimeMinutes">Speltid i minuter</label>
+
+            <input
+              id="runTimeMinutes"
+              type="number"
+              value={runTimeMinutes}
+              onChange={(event) => setRunTimeMinutes(event.target.value)}
+            />
+          </div>
+        )}
+
+        <div className="form-group">
+          <label htmlFor="category">Kategori</label>
+
+          <select
+            id="category"
+            value={categoryId}
+            onChange={(event) => setCategoryId(event.target.value)}
+          >
+            <option value="">Välj kategori</option>
+
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {type !== "REFERENCE_BOOK" && (
-        <div>
-          <label htmlFor="isBorrowable">Kan lånas: </label>
-
+        <label className="checkbox-group" htmlFor="isBorrowable">
           <input
             id="isBorrowable"
             type="checkbox"
             checked={isBorrowable}
             onChange={(event) => setIsBorrowable(event.target.checked)}
           />
-        </div>
+          <span>Kan lånas</span>
+        </label>
       )}
 
-      {type === "REFERENCE_BOOK" && <p>Referensböcker kan inte lånas.</p>}
+      {type === "REFERENCE_BOOK" && (
+        <p className="reference-notice">Referensböcker kan inte lånas.</p>
+      )}
 
-      <button type="submit">Skapa</button>
+      <button className="primary-button" type="submit">
+        Skapa bibliotekspost
+      </button>
     </form>
   );
 }
