@@ -42,26 +42,117 @@ function App() {
     loadLibraryItems();
   }, [loadLibraryItems]);
 
+  const borrowedItems = libraryItems.filter(
+    (item) => item.borrower !== null,
+  ).length;
+
   return (
-    <div>
-      <h1>Bibliotekssystem</h1>
+    <div className="app">
+      <header className="app-header">
+        <div className="container header-content">
+          <div className="brand">
+            <span className="brand-icon">📚</span>
 
-      <CategoryManager
-        categories={categories}
-        onCategoriesChanged={handleCategoriesChanged}
-      />
+            <div>
+              <p className="brand-name">Bibliotekssystem</p>
+              <p className="brand-subtitle">Library Management</p>
+            </div>
+          </div>
 
-      <LibraryItemForm
-        categories={categories}
-        onLibraryItemCreated={loadLibraryItems}
-      />
+          <div className="header-badge">Bibliotek</div>
+        </div>
+      </header>
 
-      <LibraryItemList
-        libraryItems={libraryItems}
-        sort={sort}
-        setSort={setSort}
-        onLibraryItemUpdated={loadLibraryItems}
-      />
+      <main className="container main-content">
+        <section className="hero-section">
+          <div>
+            <p className="eyebrow">DITT DIGITALA BIBLIOTEK</p>
+
+            <h1>Välkommen till biblioteket 👋</h1>
+
+            <p className="hero-text">
+              Hantera böcker, DVD:er, ljudböcker och referensböcker på ett
+              enkelt sätt.
+            </p>
+          </div>
+        </section>
+
+        <section className="stats-grid">
+          <div className="stat-card">
+            <span className="stat-icon">📚</span>
+            <div>
+              <p className="stat-label">Biblioteksposter</p>
+              <p className="stat-value">{libraryItems.length}</p>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <span className="stat-icon">🏷️</span>
+            <div>
+              <p className="stat-label">Kategorier</p>
+              <p className="stat-value">{categories.length}</p>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <span className="stat-icon">📖</span>
+            <div>
+              <p className="stat-label">Utlånade</p>
+              <p className="stat-value">{borrowedItems}</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="content-section">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">ADMINISTRATION</p>
+              <h2>Kategorier</h2>
+            </div>
+          </div>
+
+          <div className="content-card">
+            <CategoryManager
+              categories={categories}
+              onCategoriesChanged={handleCategoriesChanged}
+            />
+          </div>
+        </section>
+
+        <section className="content-section">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">NYTT MATERIAL</p>
+              <h2>Skapa bibliotekspost</h2>
+            </div>
+          </div>
+
+          <div className="content-card">
+            <LibraryItemForm
+              categories={categories}
+              onLibraryItemCreated={loadLibraryItems}
+            />
+          </div>
+        </section>
+
+        <section className="content-section">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">BIBLIOTEK</p>
+              <h2>Bibliotekets material</h2>
+            </div>
+          </div>
+
+          <div className="library-content">
+            <LibraryItemList
+              libraryItems={libraryItems}
+              sort={sort}
+              setSort={setSort}
+              onLibraryItemUpdated={loadLibraryItems}
+            />
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
