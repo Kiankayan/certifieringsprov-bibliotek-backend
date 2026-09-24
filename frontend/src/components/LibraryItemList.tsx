@@ -23,6 +23,19 @@ function getTitleAbbreviation(title: string) {
     .join("");
 }
 
+function getLibraryItemTypeLabel(type: LibraryItem["type"]) {
+  switch (type) {
+    case "BOOK":
+      return "Bok";
+    case "DVD":
+      return "DVD";
+    case "AUDIOBOOK":
+      return "Ljudbok";
+    case "REFERENCE_BOOK":
+      return "Referensbok";
+  }
+}
+
 function LibraryItemList({
   libraryItems,
   sort,
@@ -126,7 +139,7 @@ function LibraryItemList({
                   : item.title}
               </h2>
 
-              <p>Typ: {item.type}</p>
+              <p>Typ: {getLibraryItemTypeLabel(item.type)}</p>
 
               <p>Kategori: {item.category.name}</p>
 
