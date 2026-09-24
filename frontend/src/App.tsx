@@ -69,7 +69,7 @@ function App() {
           <div>
             <p className="eyebrow">DITT DIGITALA BIBLIOTEK</p>
 
-            <h1>Välkommen till biblioteket 👋</h1>
+            <h1>Välkommen till biblioteket 📚</h1>
 
             <p className="hero-text">
               Hantera böcker, DVD:er, ljudböcker och referensböcker på ett
